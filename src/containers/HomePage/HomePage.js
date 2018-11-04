@@ -24,13 +24,7 @@ class HomePage extends React.Component{
 
     }
     loginOut = () => {
-        Request.delete('/gardener/loginOut')
-            .then((res) => {
-                console.log("res"+res)
-            })
-            .catch((err) =>{
-                console.log(err)
-            })
+        window.location.href='/gardener/loginOut';
     }
     render(){
         if(this.state.gardenerId == 0){
@@ -67,9 +61,9 @@ class HomePage extends React.Component{
                                 defaultSelectedKeys={['2']}
                                 style={{ lineHeight: '64px' }}
                             >
-                                <Menu.Item key={"loginOut"} style={{ float:'right'}}>
-                                    <Icon type="logout" theme="outlined" onClick={this.loginOut}/>
-                                </Menu.Item>
+
+                                    <Icon style={{ lineHeight: '64px',float:'right' }} type="logout" theme="outlined" onClick={this.loginOut}/>
+                              
                                 {topMenus}
                             </Menu>
                         </Header>
