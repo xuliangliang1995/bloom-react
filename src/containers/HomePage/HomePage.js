@@ -3,6 +3,7 @@ import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import {BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import Flowers from "../Flowers/Flowers";
 import Petals from '../Petals/Petals';
+import Request from '../../components/Axios/Axios.js';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -21,6 +22,15 @@ class HomePage extends React.Component{
             menus:props.menus?props.menus:defaultMenu
         }
 
+    }
+    loginOut = () => {
+        Request.delete('/gardener/loginOut')
+            .then((res) => {
+                console.log("res"+res)
+            })
+            .catch((err) =>{
+                console.log(err)
+            })
     }
     render(){
         if(this.state.gardenerId == 0){
@@ -57,6 +67,9 @@ class HomePage extends React.Component{
                                 defaultSelectedKeys={['2']}
                                 style={{ lineHeight: '64px' }}
                             >
+                                <Menu.Item key={"loginOut"} style={{ float:'right'}}>
+                                    <Icon type="logout" theme="outlined" onClick={this.loginOut}/>
+                                </Menu.Item>
                                 {topMenus}
                             </Menu>
                         </Header>
