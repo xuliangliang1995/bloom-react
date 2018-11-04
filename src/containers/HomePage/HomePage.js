@@ -63,7 +63,7 @@ class HomePage extends React.Component{
                             >
 
                                     <Icon style={{ lineHeight: '64px',float:'right' }} type="logout" theme="outlined" onClick={this.loginOut}/>
-                              
+
                                 {topMenus}
                             </Menu>
                         </Header>
