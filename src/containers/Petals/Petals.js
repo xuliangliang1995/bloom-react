@@ -1,14 +1,15 @@
 import React from 'react';
 import { Table, Divider, Rate } from 'antd';
-import { Link } from 'react-router-dom';
 import Request from '../../components/Axios/Axios.js';
 const { Column } = Table;
 
-class Flowers extends React.Component{
+class Petals extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            gardenerId: props.gardenerId?props.gardenerId:0,
+            flowerId: props.match.params.flowerId
+                ?props.match.params.flowerId
+                :0,
             data: [],
             pagination: {},
             loading: false
@@ -31,7 +32,7 @@ class Flowers extends React.Component{
     fetch = (params = {}) => {
         let _this = this;
         _this.setState({ loading: true });
-        Request.get('/gardener/'+this.state.gardenerId+'/flowers',{
+        Request.get('/flowers/'+this.state.flowerId+'/petal',{
             params: params
         })
             .then(function(response){
@@ -62,32 +63,19 @@ class Flowers extends React.Component{
                     key="id"
                 />
                 <Column
-                    title="花名"
+                    title="叶子"
                     dataIndex="name"
                     key="name"
-                    render={(text,record)=>{
-                        let  path = "/flowers/"+record.id+"/petals";
-                        return (
-                            <span>
-                                <Link to={path}>{text}</Link>
-                            </span>
-                        )
-                    }}
                 />
                 <Column
-                    title="花语"
-                    dataIndex="moral"
-                    key="moral"
+                    title="备注"
+                    dataIndex="note"
+                    key="note"
                 />
                 <Column
-                    title="星级"
-                    dataIndex="star"
-                    key="star"
-                    render={star => (
-                        <span>
-                          <Rate disabled defaultValue={star} />
-                        </span>
-                    )}
+                    title="创建时间"
+                    dataIndex="ct"
+                    key="ct"
                 />
                 <Column
                     title="操作"
@@ -105,4 +93,4 @@ class Flowers extends React.Component{
     }
 }
 
-export default Flowers;
+export default Petals;

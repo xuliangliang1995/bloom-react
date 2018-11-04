@@ -1,7 +1,8 @@
 import React from 'react';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import Flowers from "../Flowers/Flowers";
+import Petals from '../Petals/Petals';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -9,7 +10,12 @@ const { Header, Content, Sider } = Layout;
 class HomePage extends React.Component{
     constructor(props){
         super(props);
-        let gardenerId = props.location.state.gardenerId;
+        let gardenerId = props.location.state
+            ?(
+                props.location.state.gardenerId
+                    ?props.location.state.gardenerId
+                    :0
+            ):0
         this.state = {
             gardenerId: gardenerId?gardenerId:0,
             menus:props.menus?props.menus:defaultMenu
@@ -17,6 +23,9 @@ class HomePage extends React.Component{
 
     }
     render(){
+        if(this.state.gardenerId == 0){
+            return <Redirect to={"/login"}/>
+        }
         let logo = {
             width: '120px',
             height: '31px',
@@ -74,6 +83,7 @@ class HomePage extends React.Component{
                                                 return <Flowers gardenerId={this.state.gardenerId}/>;
                                             }
                                         } exact/>
+                                        <Route path={"/flowers/:flowerId/petals"} component={Petals}/>
                                 </Content>
                             </Layout>
                         </Layout>
