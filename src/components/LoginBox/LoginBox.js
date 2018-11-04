@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import { Redirect,Link } from 'react-router-dom';
-import $axios from '../../components/Axios/Axios';
+import Request from '../../components/Axios/Axios';
 const FormItem = Form.Item;
 
 
@@ -9,8 +9,11 @@ class NormalLoginForm extends React.Component {
     constructor(){
         super();
         this.state = {
-            isLogin: false
+            gardenerId: 0
         }
+    }
+    componentDidMount(){
+        this.loginCheck()
     }
     handleSubmit = (e) => {
         e.preventDefault();
@@ -18,27 +21,33 @@ class NormalLoginForm extends React.Component {
         _this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                $axios.get('/gardener',{
+                Request.get('/gardener',{
                     params: values
                 })
                     .then(function(response) {
-                        console.log(response.data);
-                        console.log(response.status);
-                        console.log(response.statusText);
-                        console.log(response.headers);
-                        console.log(response.config);
                         _this.setState({
-                            isLogin:true
+                            gardenerId:response.data.id
                         })
                     });
             }
         });
     }
+    loginCheck = () => {
+        Request.get('/gardener/loginInfo')
+            .then((res) => this.setState({
+                gardenerId: res.data
+            }))
+    }
 
     render() {
-        if(this.state.isLogin){
+        if(this.state.gardenerId > 0){
             return (
-                <Redirect to={"/home"}/>
+                <Redirect to={{
+                    pathname: "/home",
+                    state: {
+                        gardenerId: this.state.gardenerId
+                    }
+                }}/>
             )
         }
         const { getFieldDecorator } = this.props.form;

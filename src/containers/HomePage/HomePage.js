@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
-import {BrowserRouter, Route, Link} from 'react-router-dom';
-import App from "../../App";
+import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import Flowers from "../Flowers/Flowers";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -9,7 +9,9 @@ const { Header, Content, Sider } = Layout;
 class HomePage extends React.Component{
     constructor(props){
         super(props);
+        let gardenerId = props.location.state.gardenerId;
         this.state = {
+            gardenerId: gardenerId?gardenerId:0,
             menus:props.menus?props.menus:defaultMenu
         }
 
@@ -36,7 +38,7 @@ class HomePage extends React.Component{
         )
         return (
             <div>
-                <BrowserRouter basename={'/home'}>
+                <Router basename={'/home'}>
                     <Layout>
                         <Header className="header">
                             <div className='logo' style={ logo }/>
@@ -67,12 +69,16 @@ class HomePage extends React.Component{
                                     <Breadcrumb.Item>App</Breadcrumb.Item>
                                 </Breadcrumb>
                                 <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
-                                        <Route path={"/flowers"} component={App} exact/>
+                                        <Route path={"/flowers"} component={
+                                            () => {
+                                                return <Flowers gardenerId={this.state.gardenerId}/>;
+                                            }
+                                        } exact/>
                                 </Content>
                             </Layout>
                         </Layout>
                     </Layout>
-                </BrowserRouter>
+                </Router>
             </div>
 
         )

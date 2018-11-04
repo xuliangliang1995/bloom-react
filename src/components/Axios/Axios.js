@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const $axios = axios.create({
-    baseURL: 'https://grasswort.com',
+const Request = axios.create({
     withCredentials: false,
     timeout: 100000,
     transformRequest: [function (data) {
@@ -19,4 +18,4 @@ const $axios = axios.create({
     ]
 })
 
-export default $axios;
+export default Request;
