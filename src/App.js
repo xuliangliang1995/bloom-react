@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Layout, Carousel,Card } from 'antd';
+import { Layout, Carousel,Card, Drawer } from 'antd';
 import './App.css';
 import LoginBox from './components/LoginBox/LoginBox';
+import Register from './containers/Register/Register';
 const { Header, Footer, Sider, Content } = Layout;
 
 class App extends Component {
@@ -9,9 +10,21 @@ class App extends Component {
         super();
         this.state = {
             baseColor: 'rgb(60, 179, 113)',
-            themeColor: 'rgb(46, 139, 87)'
+            themeColor: 'rgb(46, 139, 87)',
+            visible: false
         }
     }
+    showDrawer = () => {
+        this.setState({
+            visible: true,
+        });
+    };
+
+    onClose = () => {
+        this.setState({
+            visible: false,
+        });
+    };
     render() {
         return (
             <div className="App">
@@ -65,7 +78,7 @@ class App extends Component {
                                     <Layout style={{ height:'80%'}}>
                                         <Sider width='10%' style={{background:this.state.themeColor}}></Sider>
                                         <Content style={{ height: '100%',background:this.state.themeColor}}>
-                                            <LoginBox/>
+                                            <LoginBox showDrawer={this.showDrawer}/>
                                         </Content>
                                         <Sider width='10%' style={{background:this.state.themeColor}}></Sider>
                                     </Layout>
@@ -77,6 +90,16 @@ class App extends Component {
                     </Layout>
                     <Footer style={{ height:'20%',background:this.state.baseColor}}>https://grasswort.com</Footer>
                 </Layout>
+                <Drawer
+                    placement="right"
+                    width={500}
+                    closable={false}
+                    onClose={this.onClose}
+                    visible={this.state.visible}
+                    style={{padding:'0px',height:'100%'}}
+                >
+                    <Register callback={this.onClose}/>
+                </Drawer>
             </div>
         );
     }

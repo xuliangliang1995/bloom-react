@@ -1,9 +1,8 @@
 import React from 'react';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
-import {BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
+import {HashRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import Flowers from "../Flowers/Flowers";
 import Petals from '../Petals/Petals';
-import Request from '../../components/Axios/Axios.js';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;

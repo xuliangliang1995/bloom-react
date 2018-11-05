@@ -1,15 +1,16 @@
 import React from 'react';
-import { Form, Input, Tooltip, Icon, Button } from 'antd';
+import { Form, Input, Tooltip, Icon, Button, message } from 'antd';
 import $axios from '../../components/Axios/Axios';
-import { Redirect } from 'react-router-dom';
 
 const FormItem = Form.Item;
 
 class RegistrationForm extends React.Component {
-    state = {
-        confirmDirty: false,
-        registerSuccess: false
-    };
+    constructor(props){
+        super(props);
+        this.state = {
+            confirmDirty: false
+        };
+    }
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -18,12 +19,16 @@ class RegistrationForm extends React.Component {
             if (!err) {
                 console.log('Received values of form: ', values);
                 $axios.post('/gardener',values)
-                    .then(function(response){
+                .then(function(response){
                     console.log(response.data);
                     console.log(response.status);
-                    _this.setState({
-                        registerSuccess:true
-                    })
+                    if(_this.props.registerSuccess){
+                        message.success("注册成功！");
+                        _this.props.registerSuccess();
+                    }
+                })
+                .catch(error => {
+                    message.warning(error.response.data[0].message);
                 })
             }
         });
@@ -52,11 +57,6 @@ class RegistrationForm extends React.Component {
     }
 
     render() {
-        if(this.state.registerSuccess){
-            return (
-                <Redirect to={"/login"}/>
-            )
-        }
         const { getFieldDecorator } = this.props.form;
 
         const formItemLayout = {
@@ -81,7 +81,6 @@ class RegistrationForm extends React.Component {
                 },
             },
         };
-
         return (
             <Form onSubmit={this.handleSubmit}>
                 <FormItem
@@ -148,7 +147,14 @@ class RegistrationForm extends React.Component {
                 </FormItem>
                 <FormItem
                     {...formItemLayout}
-                    label="邮箱"
+                    label={(
+                        <span>
+                            邮箱&nbsp;
+                            <Tooltip title="重置密码所需要的信息，请认真填写！">
+                                <Icon type="question-circle-o" />
+                            </Tooltip>
+                        </span>
+                    )}
                 >
                     {getFieldDecorator('email', {
                         rules: [{
