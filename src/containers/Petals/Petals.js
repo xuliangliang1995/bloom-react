@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Divider, Rate } from 'antd';
+import { Table, Divider, Rate,Icon } from 'antd';
 import Request from '../../components/Axios/Axios.js';
 const { Column } = Table;
 
@@ -66,6 +66,14 @@ class Petals extends React.Component{
                     title="叶子"
                     dataIndex="name"
                     key="name"
+                    render={(name) =>{
+                        return (
+                            <span>
+                                <Icon type="file" theme="outlined" />&nbsp;
+                                {name}
+                            </span>
+                        )
+                    }}
                 />
                 <Column
                     title="备注"

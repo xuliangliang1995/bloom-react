@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
-import {HashRouter as Router, Route, Link, Redirect} from 'react-router-dom';
+import { HashRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import Flowers from "../Flowers/Flowers";
 import Petals from '../Petals/Petals';
 
@@ -18,7 +18,8 @@ class HomePage extends React.Component{
             ):0
         this.state = {
             gardenerId: gardenerId?gardenerId:0,
-            menus:props.menus?props.menus:defaultMenu
+            menus:props.menus?props.menus:defaultMenu,
+            navigationColor: '#008B8B'
         }
 
     }
@@ -26,7 +27,7 @@ class HomePage extends React.Component{
         window.location.href='/gardener/loginOut';
     }
     render(){
-        if(this.state.gardenerId == 0){
+        if(this.state.gardenerId === 0){
             return <Redirect to={"/login"}/>
         }
         let logo = {
@@ -52,17 +53,15 @@ class HomePage extends React.Component{
             <div>
                 <Router basename={'/home'}>
                     <Layout>
-                        <Header className="header">
+                        <Header className="header" style={{ background:this.state.navigationColor }}>
                             <div className='logo' style={ logo }/>
+                            <Icon style={{ lineHeight: '64px',float:'right',background:this.state.navigationColor }} type="logout" theme="outlined" onClick={this.loginOut}/>
                             <Menu
                                 theme="dark"
                                 mode="horizontal"
-                                defaultSelectedKeys={['2']}
-                                style={{ lineHeight: '64px' }}
+                                defaultSelectedKeys={['001001']}
+                                style={{ lineHeight: '64px',background:this.state.navigationColor }}
                             >
-
-                                    <Icon style={{ lineHeight: '64px',float:'right' }} type="logout" theme="outlined" onClick={this.loginOut}/>
-
                                 {topMenus}
                             </Menu>
                         </Header>
@@ -70,8 +69,8 @@ class HomePage extends React.Component{
                             <Sider width={200} style={{ background: '#fff' }}>
                                 <Menu
                                     mode="inline"
-                                    defaultSelectedKeys={['1']}
-                                    defaultOpenKeys={['sub1']}
+                                    defaultSelectedKeys={['001001']}
+                                    defaultOpenKeys={['001','002']}
                                     style={{ height: '100%', borderRight: 0 }}
                                 >
                                     {leftMenus}
@@ -84,6 +83,7 @@ class HomePage extends React.Component{
                                     <Breadcrumb.Item>App</Breadcrumb.Item>
                                 </Breadcrumb>
                                 <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
+                                        <Redirect path={"/"} to={"/flowers"} exact/>
                                         <Route path={"/flowers"} component={
                                             () => {
                                                 return <Flowers gardenerId={this.state.gardenerId}/>;

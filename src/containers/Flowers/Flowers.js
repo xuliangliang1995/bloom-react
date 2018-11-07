@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Divider, Rate } from 'antd';
+import { Table, Divider, Rate,Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import Request from '../../components/Axios/Axios.js';
 const { Column } = Table;
@@ -69,6 +69,7 @@ class Flowers extends React.Component{
                         let  path = "/flowers/"+record.id+"/petals";
                         return (
                             <span>
+                                <Icon type="folder-open" theme="outlined" />&nbsp;
                                 <Link to={path}>{text}</Link>
                             </span>
                         )
