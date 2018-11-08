@@ -3,6 +3,7 @@ import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import { HashRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import Flowers from "../Flowers/Flowers";
 import Petals from '../Petals/Petals';
+import PetalsEditor from '../Petals/PetalsEditor';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -24,7 +25,7 @@ class HomePage extends React.Component{
 
     }
     loginOut = () => {
-        window.location.href='/gardener/loginOut';
+        this.props.loginOut();
     }
     render(){
         if(this.state.gardenerId === 0){
@@ -44,7 +45,7 @@ class HomePage extends React.Component{
             <SubMenu key={menu.key} title={<span><Icon type={menu.icon} />{menu.name}</span>}>
                 {
                     menu.menus.map(submenu =>
-                        <Menu.Item key={submenu.key}><Link to={submenu.to}>{submenu.name}</Link></Menu.Item>
+                        <Menu.Item key={submenu.key}><Link to={submenu.to} replace>{submenu.name}</Link></Menu.Item>
                     )
                 }
             </SubMenu>
@@ -83,13 +84,18 @@ class HomePage extends React.Component{
                                     <Breadcrumb.Item>App</Breadcrumb.Item>
                                 </Breadcrumb>
                                 <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
-                                        <Redirect path={"/"} to={"/flowers"} exact/>
+                                        <Route path={"/"}  component={
+                                            () => {
+                                                return <Flowers gardenerId={this.state.gardenerId}/>;
+                                            }
+                                        } exact/>
                                         <Route path={"/flowers"} component={
                                             () => {
                                                 return <Flowers gardenerId={this.state.gardenerId}/>;
                                             }
                                         } exact/>
-                                        <Route path={"/flowers/:flowerId/petals"} component={Petals}/>
+                                        <Route path={"/flowers/:flowerId/petals"} component={Petals} exact/>
+                                        <Route path={"/petals/:petalId/editor"} component={PetalsEditor} exact/>
                                 </Content>
                             </Layout>
                         </Layout>

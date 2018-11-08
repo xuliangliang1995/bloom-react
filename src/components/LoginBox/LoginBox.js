@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, Icon, Input, Button, Checkbox,message } from 'antd';
-import { Redirect,Link } from 'react-router-dom';
 import Request from '../../components/Axios/Axios';
 const FormItem = Form.Item;
 
@@ -9,15 +8,18 @@ class NormalLoginForm extends React.Component {
     constructor(){
         super();
         this.state = {
-            gardenerId: 0
+            gardenerId: -1
         }
     }
-    componentDidMount(){
-        this.loginCheck()
+    //登录成功
+    loginSuccess=(gardnerId)=>{
+        this.props.loginSuccess(gardnerId);
     }
+    //展示注册框
     showRegisterBox=(e) => {
         this.props.showDrawer()
     }
+    //提交表单
     handleSubmit = (e) => {
         e.preventDefault();
         let _this = this;
@@ -28,9 +30,7 @@ class NormalLoginForm extends React.Component {
                 })
                     .then(response => {
                         message.success("登录成功！");
-                        _this.setState({
-                            gardenerId:response.data.id
-                        })
+                        this.loginSuccess(response.data.id)
                     })
                     .catch(error => {
                         message.warning(error.response.data[0].message);
@@ -38,24 +38,7 @@ class NormalLoginForm extends React.Component {
             }
         });
     }
-    loginCheck = () => {
-        Request.get('/gardener/loginInfo')
-            .then((res) => this.setState({
-                gardenerId: res.data
-            }))
-    }
-
     render() {
-        if(this.state.gardenerId > 0){
-            return (
-                <Redirect to={{
-                    pathname: "/home",
-                    state: {
-                        gardenerId: this.state.gardenerId
-                    }
-                }}/>
-            )
-        }
         const { getFieldDecorator } = this.props.form;
         return (
             <Form onSubmit={this.handleSubmit} className="login-form">

@@ -48,6 +48,11 @@ class Flowers extends React.Component{
     componentDidMount() {
         this.fetch();
     }
+    componentWillUnmount(){
+        this.setState = (state,callback) => {
+            return;
+        }
+    }
     render(){
         return (
             <Table dataSource={this.state.data}

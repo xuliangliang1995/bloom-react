@@ -1,6 +1,7 @@
 import React from 'react';
 import { Table, Divider, Rate,Icon } from 'antd';
 import Request from '../../components/Axios/Axios.js';
+import { Link } from 'react-router-dom';
 const { Column } = Table;
 
 class Petals extends React.Component{
@@ -66,11 +67,12 @@ class Petals extends React.Component{
                     title="叶子"
                     dataIndex="name"
                     key="name"
-                    render={(name) =>{
+                    render={(name,record) =>{
+                        let path = "/petals/"+record.id+'/editor';
                         return (
                             <span>
                                 <Icon type="file" theme="outlined" />&nbsp;
-                                {name}
+                                <Link to={ path }>{ name }</Link>
                             </span>
                         )
                     }}

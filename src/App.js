@@ -3,6 +3,8 @@ import { Layout, Carousel,Card, Drawer } from 'antd';
 import './App.css';
 import LoginBox from './components/LoginBox/LoginBox';
 import Register from './containers/Register/Register';
+import { Redirect } from 'react-router-dom';
+import Request from './components/Axios/Axios';
 const { Header, Footer, Sider, Content } = Layout;
 
 class App extends Component {
@@ -11,8 +13,12 @@ class App extends Component {
         this.state = {
             baseColor: 'rgb(60, 179, 113)',
             themeColor: 'rgb(46, 139, 87)',
-            visible: false
+            visible: false,
+            gardenerId: -1
         }
+    }
+    componentDidMount(){
+        this.getLoginInfo()
     }
     showDrawer = () => {
         this.setState({
@@ -25,7 +31,45 @@ class App extends Component {
             visible: false,
         });
     };
+
+    loginSuccess = (gardenerId) => {
+        this.setState({
+            gardenerId: gardenerId
+        })
+    }
+    loginOut = () => {
+        window.location.href='/gardener/loginOut';
+        this.setState({
+            gardenerId: 0
+        })
+    }
+
+    getLoginInfo = () => {
+        Request.get('/gardener/loginInfo')
+            .then(response => this.setState({
+                gardenerId: response.data.id
+            }))
+            .catch(error => this.setState({
+                gardenerId: 0
+            }))
+    }
     render() {
+        if(this.state.gardenerId === -1){
+            return (
+                <div></div>
+            )
+        }
+        if(this.state.gardenerId > 0){
+            return (
+               <Redirect to={{
+                    pathname: "/home",
+                    state: {
+                        gardenerId: this.state.gardenerId,
+                        loginOut: this.loginOut
+                    }
+                }}/>
+            )
+        }
         return (
             <div className="App">
                 <Layout className="App">
@@ -78,7 +122,7 @@ class App extends Component {
                                     <Layout style={{ height:'80%'}}>
                                         <Sider width='10%' style={{background:this.state.themeColor}}></Sider>
                                         <Content style={{ height: '100%',background:this.state.themeColor}}>
-                                            <LoginBox showDrawer={this.showDrawer}/>
+                                            <LoginBox showDrawer={this.showDrawer} loginSuccess={this.loginSuccess}/>
                                         </Content>
                                         <Sider width='10%' style={{background:this.state.themeColor}}></Sider>
                                     </Layout>
