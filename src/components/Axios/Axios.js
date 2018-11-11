@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const Request = axios.create({
-    withCredentials: false,
+    withCredentials: true,
     timeout: 100000,
     transformRequest: [function (data) {
         // 对 data 进行任意转换处理

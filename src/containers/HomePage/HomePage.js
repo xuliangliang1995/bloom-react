@@ -25,7 +25,12 @@ class HomePage extends React.Component{
 
     }
     loginOut = () => {
-        this.props.loginOut();
+        this.props.location.state.loginOut();
+    }
+    componentWillUnmount(){
+        this.setState = (state,callback) => {
+            return;
+        }
     }
     render(){
         if(this.state.gardenerId === 0){
@@ -51,9 +56,9 @@ class HomePage extends React.Component{
             </SubMenu>
         )
         return (
-            <div>
-                <Router basename={'/home'}>
-                    <Layout>
+            <div style={{ height:'100%'}}>
+                <Router basename={'/home'} style={{ height:'100%'}}>
+                    <Layout style={{ height:'100%'}}>
                         <Header className="header" style={{ background:this.state.navigationColor }}>
                             <div className='logo' style={ logo }/>
                             <Icon style={{ lineHeight: '64px',float:'right',background:this.state.navigationColor }} type="logout" theme="outlined" onClick={this.loginOut}/>
@@ -77,13 +82,13 @@ class HomePage extends React.Component{
                                     {leftMenus}
                                 </Menu>
                             </Sider>
-                            <Layout style={{ padding: '0 24px 24px',minHeight:'900px' }}>
+                            <Layout className={"grass-body"} style={{ padding: '0 24px 24px',minHeight:'900px' }}>
                                 <Breadcrumb style={{ margin: '16px 0' }}>
                                     <Breadcrumb.Item>Home</Breadcrumb.Item>
                                     <Breadcrumb.Item>List</Breadcrumb.Item>
                                     <Breadcrumb.Item>App</Breadcrumb.Item>
                                 </Breadcrumb>
-                                <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
+                                <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280, height:'100%' }}>
                                         <Route path={"/"}  component={
                                             () => {
                                                 return <Flowers gardenerId={this.state.gardenerId}/>;
@@ -95,7 +100,7 @@ class HomePage extends React.Component{
                                             }
                                         } exact/>
                                         <Route path={"/flowers/:flowerId/petals"} component={Petals} exact/>
-                                        <Route path={"/petals/:petalId/editor"} component={PetalsEditor} exact/>
+                                        <Route path={"/flowers/:flowerId/petals/:petalId/editor"} component={PetalsEditor} exact/>
                                 </Content>
                             </Layout>
                         </Layout>

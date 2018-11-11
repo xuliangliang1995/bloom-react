@@ -43,7 +43,11 @@ class App extends Component {
             gardenerId: 0
         })
     }
-
+    componentWillUnmount(){
+        this.setState = (state,callback) => {
+            return;
+        }
+    }
     getLoginInfo = () => {
         Request.get('/gardener/loginInfo')
             .then(response => this.setState({

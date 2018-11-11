@@ -68,7 +68,7 @@ class Petals extends React.Component{
                     dataIndex="name"
                     key="name"
                     render={(name,record) =>{
-                        let path = "/petals/"+record.id+'/editor';
+                        let path = "/flowers/"+this.state.flowerId+"/petals/"+record.id+'/editor';
                         return (
                             <span>
                                 <Icon type="file" theme="outlined" />&nbsp;
