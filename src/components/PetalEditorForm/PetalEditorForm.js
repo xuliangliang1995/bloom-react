@@ -25,16 +25,18 @@ class PetalEditorFormBox extends React.Component {
         e.preventDefault();
         let _this = this;
         _this.props.form.validateFields((err, values) => {
-            values["raw"]=this.state.editorState.toRAW();
-            values["text"]=this.state.editorState.toHTML();
-            console.log(values)
-            if(this.state.petalId ===0){
-                const path = "/flowers/"+this.state.flowerId+"/petal";
-                Request.post(path,values).then(() => {
-                    message.success("添加成功！")
-                }).catch(error => {
-                    message.warning(error.response.data[0].message);
-                })
+            if(!err){
+                values["raw"]=this.state.editorState.toRAW();
+                values["text"]=this.state.editorState.toHTML();
+                console.log(values)
+                if(this.state.petalId ===0){
+                    const path = "/flowers/"+this.state.flowerId+"/petal";
+                    Request.post(path,values).then(() => {
+                        message.success("添加成功！")
+                    }).catch(error => {
+                        message.warning(error.response.data[0].message);
+                    })
+                }
             }
         });
     }

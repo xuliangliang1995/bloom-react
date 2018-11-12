@@ -1,7 +1,7 @@
 import React from 'react';
-import { Table, Divider, Rate,Icon } from 'antd';
+import { Table, Divider,Icon,Button } from 'antd';
 import Request from '../../components/Axios/Axios.js';
-import { Link } from 'react-router-dom';
+import { Link,Redirect } from 'react-router-dom';
 const { Column } = Table;
 
 class Petals extends React.Component{
@@ -13,7 +13,8 @@ class Petals extends React.Component{
                 :0,
             data: [],
             pagination: {},
-            loading: false
+            loading: false,
+            addPetal:false
         }
     }
     handleTableChange = (pagination, filters, sorter) => {
@@ -50,55 +51,70 @@ class Petals extends React.Component{
     componentDidMount() {
         this.fetch();
     }
+
+    addPetals=()=>{
+        this.setState({
+            addPetal: true
+        })
+        console.log(this.state.addPetal)
+    }
     render(){
+        if(this.state.addPetal){
+            return (
+                <Redirect to={ "/flowers/"+this.state.flowerId+"/petals/0/editor" }/>
+            )
+        }
         return (
-            <Table dataSource={this.state.data}
-                   rowKey={record => record.id}
-                   pagination={this.state.pagination}
-                   loading={this.state.loading}
-                   onChange={this.handleTableChange}
-            >
-                <Column
-                    title="ID"
-                    dataIndex="id"
-                    key="id"
-                />
-                <Column
-                    title="叶子"
-                    dataIndex="name"
-                    key="name"
-                    render={(name,record) =>{
-                        let path = "/flowers/"+this.state.flowerId+"/petals/"+record.id+'/editor';
-                        return (
-                            <span>
+            <div>
+                <Button onClick={ this.addPetals }>添加</Button>
+                <Table dataSource={this.state.data}
+                       rowKey={record => record.id}
+                       pagination={this.state.pagination}
+                       loading={this.state.loading}
+                       onChange={this.handleTableChange}
+                >
+                    <Column
+                        title="ID"
+                        dataIndex="id"
+                        key="id"
+                    />
+                    <Column
+                        title="叶子"
+                        dataIndex="name"
+                        key="name"
+                        render={(name,record) =>{
+                            let path = "/flowers/"+this.state.flowerId+"/petals/"+record.id+'/editor';
+                            return (
+                                <span>
                                 <Icon type="file" theme="outlined" />&nbsp;
-                                <Link to={ path }>{ name }</Link>
+                                    <Link to={ path }>{ name }</Link>
                             </span>
-                        )
-                    }}
-                />
-                <Column
-                    title="备注"
-                    dataIndex="note"
-                    key="note"
-                />
-                <Column
-                    title="创建时间"
-                    dataIndex="ct"
-                    key="ct"
-                />
-                <Column
-                    title="操作"
-                    key="action"
-                    render={() => (
-                        <span>
+                            )
+                        }}
+                    />
+                    <Column
+                        title="备注"
+                        dataIndex="note"
+                        key="note"
+                    />
+                    <Column
+                        title="创建时间"
+                        dataIndex="ct"
+                        key="ct"
+                    />
+                    <Column
+                        title="操作"
+                        key="action"
+                        render={() => (
+                            <span>
                       <a href="javascript:;">编辑</a>
                       <Divider type="vertical" />
                       <a href="javascript:;">删除</a>
                     </span>
-                    )}
-                />
-            </Table>
+                        )}
+                    />
+                </Table>
+            </div>
         )
     }
 }
