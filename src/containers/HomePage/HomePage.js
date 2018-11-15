@@ -4,6 +4,7 @@ import { HashRouter as Router, Route, Link, Redirect} from 'react-router-dom';
 import Flowers from "../Flowers/Flowers";
 import Petals from '../Petals/Petals';
 import PetalsEditor from '../Petals/PetalsEditor';
+import PetalPage from '../Petals/PetalPage';
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -76,7 +77,7 @@ class HomePage extends React.Component{
                                 <Menu
                                     mode="inline"
                                     defaultSelectedKeys={['001001']}
-                                    defaultOpenKeys={['001','002']}
+                                    defaultOpenKeys={['001','002','003']}
                                     style={{ height: '100%', borderRight: 0 }}
                                 >
                                     {leftMenus}
@@ -100,6 +101,7 @@ class HomePage extends React.Component{
                                             }
                                         } exact/>
                                         <Route path={"/flowers/:flowerId/petals"} component={Petals} exact/>
+                                        <Route path={"/flowers/:flowerId/petals/:petalId"} component={PetalPage} exact/>
                                         <Route path={"/flowers/:flowerId/petals/:petalId/editor"} component={PetalsEditor} exact/>
                                 </Content>
                             </Layout>

@@ -33,6 +33,7 @@ class App extends Component {
     };
 
     loginSuccess = (gardenerId) => {
+        console.log(gardenerId)
         this.setState({
             gardenerId: gardenerId
         })
@@ -50,9 +51,11 @@ class App extends Component {
     }
     getLoginInfo = () => {
         Request.get('/gardener/loginInfo')
-            .then(response => this.setState({
-                gardenerId: response.data.id
-            }))
+            .then(response => {
+                this.setState({
+                    gardenerId: response.data
+                })
+            })
             .catch(error => this.setState({
                 gardenerId: 0
             }))

@@ -11,8 +11,6 @@ export default class Iframe extends React.Component{
         return (
             <iframe
                     style={{ padding:'0px',margin:'0px',minHeight:'500px'}}
-                    id={"petalPreview"}
-                    className="rich-text-container"
                     frameBorder={0}
                     marginHeight={'0px'}
                     marginWidth={'0px'}

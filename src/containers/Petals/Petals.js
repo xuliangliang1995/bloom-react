@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Divider,Icon,Button } from 'antd';
+import { Table, Divider,Icon,Modal,Button,message,Radio } from 'antd';
 import Request from '../../components/Axios/Axios.js';
 import { Link,Redirect } from 'react-router-dom';
 const { Column } = Table;
@@ -14,7 +14,8 @@ class Petals extends React.Component{
             data: [],
             pagination: {},
             loading: false,
-            addPetal:false
+            addPetal:false,
+            modal:null
         }
     }
     handleTableChange = (pagination, filters, sorter) => {
@@ -53,10 +54,37 @@ class Petals extends React.Component{
     }
 
     addPetals=()=>{
+        if(this.state.modal){
+            this.state.modal.destroy()
+        }
         this.setState({
             addPetal: true
         })
         console.log(this.state.addPetal)
+    }
+    choosePetalVariety = () => {
+        this.setState({
+            modal: Modal.info({
+                title:'请选择一个类型',
+                content: (
+                    <div style={{ width:'100%'}}>
+                        <Radio.Group style={{ marginLeft:'auto',marginRight:'auto',width:'100%' }}>
+                            <Radio.Button
+                                onClick = { this.addPetals }
+                                style={{ width:'50%'}}
+                            >富文本</Radio.Button>
+                            <Radio.Button
+                                onClick={ () => {
+                                    message.info("暂不支持该选择！")
+                                }}
+                                style={{ width:'50%'}}
+                            >链接</Radio.Button>
+                        </Radio.Group>
+                    </div>
+                ),
+                okText: '取消'
+            })
+        })
     }
     render(){
         if(this.state.addPetal){
@@ -66,7 +94,6 @@ class Petals extends React.Component{
         }
         return (
             <div>
-                <Button onClick={ this.addPetals }>添加</Button>
                 <Table dataSource={this.state.data}
                        rowKey={record => record.id}
                        pagination={this.state.pagination}
@@ -74,7 +101,7 @@ class Petals extends React.Component{
                        onChange={this.handleTableChange}
                 >
                     <Column
-                        title="ID"
+                        title={<Icon type="plus" onClick={ this.choosePetalVariety }/>}
                         dataIndex="id"
                         key="id"
                     />
@@ -83,19 +110,14 @@ class Petals extends React.Component{
                         dataIndex="name"
                         key="name"
                         render={(name,record) =>{
-                            let path = "/flowers/"+this.state.flowerId+"/petals/"+record.id+'/editor';
+                            let path = "/flowers/"+this.state.flowerId+"/petals/"+record.id;
                             return (
                                 <span>
-                                <Icon type="file" theme="outlined" />&nbsp;
+                                    <Icon type="file" theme="outlined" />&nbsp;
                                     <Link to={ path }>{ name }</Link>
-                            </span>
+                                </span>
                             )
                         }}
-                    />
-                    <Column
-                        title="备注"
-                        dataIndex="note"
-                        key="note"
                     />
                     <Column
                         title="创建时间"

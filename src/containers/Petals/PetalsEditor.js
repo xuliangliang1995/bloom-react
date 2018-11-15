@@ -1,7 +1,7 @@
 import React from 'react'
 // 引入编辑器组件
 import BraftEditor from 'braft-editor'
-import { Select,Drawer } from 'antd';
+import { Select,Drawer,Alert } from 'antd';
 // 引入Petals表单
 import PetalsEditorForm from '../../components/PetalEditorForm/PetalEditorForm';
 // 引入编辑器样式
@@ -114,6 +114,7 @@ export default class PetalsEditor extends React.Component {
     render () {
         return (
             <div style={{ height:'100%'}}>
+                <Alert message="保存命令: Ctr + S" type="info" closable showIcon />
                 <BraftEditor
                     value={ this.state.editorState }
                     onChange={ this.handleEditorChange }
