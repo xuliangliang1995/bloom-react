@@ -12,7 +12,25 @@ class PetalEditorFormBox extends React.Component {
             variety: 1,
             editorState: props.editorState,
             flowerId: props.flowerId,
-            petalId: props.petalId?props.petalId:0
+            petalId: props.petalId?props.petalId:0,
+            petalName: '',
+            petalNote:''
+        }
+    }
+
+    async componentDidMount(){
+        if(this.state.petalId > 0){
+            const path = '/flowers/'+this.state.flowerId+'/petal/'+this.state.petalId;
+            await Request.get(path)
+                .then(res => {
+                    this.setState({
+                        petalName: res.data.name,
+                        petalNote: res.data.note
+                    })
+                })
+                .catch(err => {
+                    message.error(err.response.date[0].message)
+                })
         }
     }
     getPreviewHtml=()=>{
@@ -29,12 +47,24 @@ class PetalEditorFormBox extends React.Component {
                 values["raw"]=this.state.editorState.toRAW();
                 values["text"]=this.state.editorState.toHTML();
                 console.log(values)
-                if(this.state.petalId ===0){
+                if(this.state.petalId ==0 ){
                     const path = "/flowers/"+this.state.flowerId+"/petal";
-                    Request.post(path,values).then(() => {
+                    Request.post(path,values).then((res) => {
+                        this.setState({
+                            petalId: res.data.id
+                        })
                         message.success("添加成功！")
+                        this.onClose()
                     }).catch(error => {
                         message.warning(error.response.data[0].message);
+                    })
+                }else{
+                    const path = "/flowers/"+this.state.flowerId+"/petal/"+this.state.petalId;
+                    Request.put(path,values).then(res => {
+                        message.success("编辑成功！")
+                        this.onClose()
+                    }).catch(err => {
+                        message.warning(err.response.data[0].message)
                     })
                 }
             }
@@ -52,6 +82,8 @@ class PetalEditorFormBox extends React.Component {
                                 <Form.Item label="">
                                     {getFieldDecorator('name', {
                                         rules: [{ required: true, message: '请输入标题' }],
+                                        initialValue: this.state.petalName,
+                                        setFieldsValue: this.state.petalName
                                     })(<Input placeholder="请输入标题" />)}
                                 </Form.Item>
                             </Col>
@@ -74,6 +106,8 @@ class PetalEditorFormBox extends React.Component {
                                 <Form.Item label="">
                                     {getFieldDecorator('note', {
                                         rules: [{ required: true, message: '请填写备注' }],
+                                        initialValue: this.state.petalNote,
+                                        setFieldsValue: this.state.petalNote
                                     })(
                                         <TextArea
                                             style={{ width: '100%', minHeight:'395px',height:'100%' }}

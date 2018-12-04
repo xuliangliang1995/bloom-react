@@ -26,7 +26,7 @@ export default class PetalPage extends  React.Component{
                 switch (variety) {
                     case 1 :
                         Request.get(path+'/text').then(res => this.setState({
-                            srcDoc: res.data,
+                            srcDoc: res.data.text,
                             petalVariety: 1,
                             loading: false
                         })).catch(err => this.setState({
@@ -35,7 +35,7 @@ export default class PetalPage extends  React.Component{
                         break;
                     case 2:
                         Request.get(path+'/link').then(res => this.setState({
-                            src: res.data,
+                            src: res.data.link,
                             petalVariety: 2,
                             loading: false
                         })).catch(err => this.setState({
@@ -66,7 +66,7 @@ export default class PetalPage extends  React.Component{
             }
             .container{
               box-sizing: border-box;
-              width: 1000px;
+              width: 100%;
               height: 100%;
               max-width: 100%;
               min-height: 100%;
@@ -106,7 +106,6 @@ export default class PetalPage extends  React.Component{
       </html>`
     }
     render(){
-        console.log(this.state.petalVariety)
         if(this.state.loading){
             let example = {
                 textAlign: 'center',
@@ -128,14 +127,14 @@ export default class PetalPage extends  React.Component{
                 )
             }else if(this.state.petalVariety == 1){
                 return (
-                    <div style={{height:'100%'}}>
-                        <iframe style={{ padding:'0px',margin:'0px',height:'100%'}}
+                    <div style={{height:'100%',overflow:'auto'}}>
+                        <iframe id={'urlIframe'} style={{ padding:'0px',margin:'0px',height:'100%',minHeight:15000,width:'100%'}}
                                 frameBorder={0}
                                 marginHeight={'0px'}
                                 marginWidth={'0px'}
                                 width={'100%'}
                                 srcDoc = { this.htmlContent() }
-                        />
+                        ></iframe>
                     </div>
                 )
             }else{
@@ -149,3 +148,4 @@ export default class PetalPage extends  React.Component{
         }
     }
 }
+

@@ -4,14 +4,13 @@
   height: 100%;
 }
 .Content{
-  height: 700px;
   overflow: hidden;
+  height: 800px;
 }
 .ant-carousel .slick-slide {
   text-align: center;
-  height: 700px;
-  line-height: 700px;
   background: #364d79;
+  height: 800px;
   overflow: hidden;
 }
 

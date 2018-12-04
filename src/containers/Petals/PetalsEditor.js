@@ -1,17 +1,13 @@
 import React from 'react'
 // 引入编辑器组件
 import BraftEditor from 'braft-editor'
-import { Select,Drawer,Alert } from 'antd';
+import { Drawer,Alert,message } from 'antd';
 // 引入Petals表单
 import PetalsEditorForm from '../../components/PetalEditorForm/PetalEditorForm';
+
+import Request from '../../components/Axios/Axios';
 // 引入编辑器样式
 import 'braft-editor/dist/index.css'
-const Option = Select.Option;
-function fetchEditorContent(){
-    return (
-        <div>明月衣我以华裳</div>
-    )
-}
 
 export default class PetalsEditor extends React.Component {
 
@@ -23,17 +19,34 @@ export default class PetalsEditor extends React.Component {
             editorState: BraftEditor.createEditorState(null),
             visible: false,
             flowerId: props.match.params.flowerId,
-            petalId: 0
+            petalId: props.match.params.petalId,
+            readOnly:props.match.params.petalId>0
         }
     }
 
-    async componentDidMount () {
+    componentDidMount () {
         // 假设此处从服务端获取html格式的编辑器内容
-        const htmlContent = await fetchEditorContent()
-        // 使用BraftEditor.createEditorState将html字符串转换为编辑器需要的editorStat
-        this.setState({
-            editorState: BraftEditor.createEditorState(htmlContent)
-        })
+        if(this.state.petalId > 0){
+            this.fetchEditorContent()
+        }else {
+            this.setState({
+                editorState: BraftEditor.createEditorState(null)
+            })
+        }
+    }
+    fetchEditorContent = () => {
+        const path = '/flowers/'+this.state.flowerId+'/petal/'+this.state.petalId+'/text';
+        Request.get(path)
+            .then(res => {
+                // 使用BraftEditor.createEditorState将html字符串转换为编辑器需要的editorState
+                this.setState({
+                    editorState: BraftEditor.createEditorState(res.data.raw),
+                    readOnly: false
+                })
+            })
+            .catch(err => {
+                message.error(err.response.data[0].message)
+            })
     }
     showDrawer = () => {
         this.setState({

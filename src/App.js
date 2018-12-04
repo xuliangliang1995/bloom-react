@@ -81,40 +81,25 @@ class App extends Component {
             <div className="App">
                 <Layout className="App">
                     <Header style={{ height:'10%',background:this.state.baseColor}}></Header>
-                    <Layout>
-                        <Sider width="10%" style={{ background:this.state.baseColor }}></Sider>
-                        <Content width="60%" className="Content">
+                    <Layout style={{ height:'700px'}}>
+                        <Sider width="10%" style={{ height:'100%'}} style={{ background:this.state.baseColor }}></Sider>
+                        <Content width="60%" style={{ height:'100%'}} className="Content">
                             <Carousel autoplay>
                                 <div>
-                                    <Card
-                                        hoverable
-                                        style={{ width: '100%'}}
-                                        cover={<img alt="example" style={{ height:'700px'}} src="https://grasswort.oss-cn-hangzhou.aliyuncs.com/grasswort/img/girl.jpg" />}
-                                    >
-                                    </Card>
+                                    <img alt="example" height={'800px'} width={'100%'} src="https://grasswort.oss-cn-hangzhou.aliyuncs.com/grasswort/img/girl.jpg_compress" />
                                 </div>
                                 <div>
-                                    <Card
-                                        hoverable
-                                        style={{ width: '100%'}}
-                                        cover={<img alt="example" style={{ height:'700px'}} src="https://grasswort.oss-cn-hangzhou.aliyuncs.com/grasswort/img/girl2.jpg" />}
-                                    >
-                                    </Card>
+                                    <img alt="example" height={'800px'} width={'100%'} src="https://grasswort.oss-cn-hangzhou.aliyuncs.com/grasswort/img/girl2.jpg_compress" />
                                 </div>
                                 <div>
-                                    <Card
-                                        hoverable
-                                        style={{ width: '100%'}}
-                                        cover={<img alt="example" style={{ height:'700px'}} src="https://grasswort.oss-cn-hangzhou.aliyuncs.com/grasswort/img/girl3.jpg" />}
-                                    >
-                                    </Card>
+                                    <img alt="example" height={'800px'} width={'100%'} src="https://grasswort.oss-cn-hangzhou.aliyuncs.com/grasswort/img/girl3.jpg_compress" />
                                 </div>
                             </Carousel>
                         </Content>
-                        <Sider width="20%" className="Content" style={{ background:this.state.themeColor}}>
-                            <Layout style={{height:'100%'}}>
+                        <Sider width="20%" className="Content" style={{ background:this.state.themeColor,height:'100%'}}>
+                            <Layout>
                                 <Content style={{ height: '50%',background:this.state.themeColor}}>
-                                    <img alt="example" style={{ margin:'10%',width:'80%',height:'80%'}} src="https://grasswort.oss-cn-hangzhou.aliyuncs.com/logo/si_ming_yue.jpg" />
+                                    <img alt="example" style={{ margin:'10%',width:'80%',height:'80%'}} src="https://grasswort.oss-cn-hangzhou.aliyuncs.com/logo/si_ming_yue.jpg_origin" />
                                 </Content>
                                 <Layout style={{ height: '50%'}}>
                                     <Header style={{ height:'10%',background:this.state.themeColor}}></Header>
@@ -129,7 +114,7 @@ class App extends Component {
                                 </Layout>
                             </Layout>
                         </Sider>
-                        <Sider width="10%" className="Content" style={{ background:this.state.baseColor }}></Sider>
+                        <Sider width="10%" className="Content" style={{ background:this.state.baseColor,height:'100%' }}></Sider>
                     </Layout>
                     <Footer style={{ height:'20%',background:this.state.baseColor}}>https://grasswort.com</Footer>
                 </Layout>

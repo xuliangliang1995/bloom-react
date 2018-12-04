@@ -1,7 +1,8 @@
 import React from 'react';
-import { Table, Divider, Rate,Icon } from 'antd';
+import {Table, Divider, Rate, Icon, Popconfirm, message} from 'antd';
 import { Link } from 'react-router-dom';
 import Request from '../../components/Axios/Axios.js';
+import FlowerEditorModal from '../../containers/Flowers/FlowerEditorModal';
 const { Column } = Table;
 
 class Flowers extends React.Component{
@@ -10,11 +11,19 @@ class Flowers extends React.Component{
         this.state = {
             gardenerId: props.gardenerId?props.gardenerId:0,
             data: [],
-            pagination: {},
-            loading: false
+            pagination: {
+                current: 1,
+                defaultCurrent: 1,
+                defaultPageSize: 10,
+                pageSize: 10,
+                total: 0
+            },
+            loading: false,
+            modalHandleFlowerId:0,
+            modalVisible: false
         }
     }
-    handleTableChange = (pagination, filters, sorter) => {
+    handleTableChange = (pagination) => {
         const pager = { ...this.state.pagination };
         pager.current = pagination.current;
         this.setState({
@@ -22,10 +31,7 @@ class Flowers extends React.Component{
         });
         this.fetch({
             page_size: pagination.pageSize,
-            page_no: pagination.current,
-            sortField: sorter.field,
-            sortOrder: sorter.order,
-            ...filters,
+            page_no: pagination.current
         });
     }
     fetch = (params = {}) => {
@@ -53,60 +59,105 @@ class Flowers extends React.Component{
             return;
         }
     }
+    addOrEditFlower=(flowerId,e)=>{
+        e.preventDefault()
+        this.setState({
+            modalHandleFlowerId: flowerId,
+            modalVisible: true
+        })
+    }
+    closeFlowerModal=() => {
+        this.setState({
+            modalHandleFlowerId:0,
+            modalVisible: false
+        })
+    }
+    closeFlowerModalAndRefresh=() => {
+        this.setState({
+            modalHandleFlowerId:0,
+            modalVisible: false
+        })
+        this.handleTableChange(this.state.pagination)
+    }
+    deleteConfirm = (petalId,e) => {
+        e.preventDefault()
+        const path = '/gardener/'+this.state.gardenerId+'/flowers/'+petalId;
+        Request.delete(path).then(res => {
+            message.info(res.data);
+            this.handleTableChange(this.state.pagination);
+        }).catch(err => {
+            console.log(err)
+        })
+    }
     render(){
         return (
-            <Table dataSource={this.state.data}
-                   rowKey={record => record.id}
-                   pagination={this.state.pagination}
-                   loading={this.state.loading}
-                   onChange={this.handleTableChange}
-            >
-                <Column
-                    title="ID"
-                    dataIndex="id"
-                    key="id"
+            <div>
+                <FlowerEditorModal
+                    gardenerId={ this.state.gardenerId }
+                    flowerId={ this.state.modalHandleFlowerId }
+                    modalVisible={ this.state.modalVisible }
+                    closeFlowerModal={ this.closeFlowerModal }
+                    closeWithRefresh={ this.closeFlowerModalAndRefresh }
                 />
-                <Column
-                    title="花名"
-                    dataIndex="name"
-                    key="name"
-                    render={(text,record)=>{
-                        let  path = "/flowers/"+record.id+"/petals";
-                        return (
+                <Table dataSource={this.state.data}
+                       rowKey={record => record.id}
+                       pagination={this.state.pagination}
+                       loading={this.state.loading}
+                       onChange={this.handleTableChange}
+                >
+                    <Column
+                        title={<Icon type="plus" onClick={ this.addOrEditFlower.bind(this,0) }/>}
+                        dataIndex="id"
+                        key="id"
+                        render={(text,record,index)=>{
+                            return parseInt((this.state.pagination.current-1)*this.state.pagination.pageSize+index+1)
+                        }}
+                    />
+                    <Column
+                        title="花名"
+                        dataIndex="name"
+                        key="name"
+                        render={(text,record)=>{
+                            let  path = "/flowers/"+record.id+"/petals";
+                            return (
+                                <span>
+                                    <Icon type="folder-open" theme="outlined" />&nbsp;
+                                    <Link to={path}>{text}</Link>
+                                </span>
+                            )
+                        }}
+                    />
+                    <Column
+                        title="花语"
+                        dataIndex="moral"
+                        key="moral"
+                    />
+                    <Column
+                        title="星级"
+                        dataIndex="star"
+                        key="star"
+                        render={star => (
                             <span>
-                                <Icon type="folder-open" theme="outlined" />&nbsp;
-                                <Link to={path}>{text}</Link>
+                              <Rate disabled defaultValue={star} />
                             </span>
-                        )
-                    }}
-                />
-                <Column
-                    title="花语"
-                    dataIndex="moral"
-                    key="moral"
-                />
-                <Column
-                    title="星级"
-                    dataIndex="star"
-                    key="star"
-                    render={star => (
-                        <span>
-                          <Rate disabled defaultValue={star} />
-                        </span>
-                    )}
-                />
-                <Column
-                    title="操作"
-                    key="action"
-                    render={() => (
-                        <span>
-                      <a href="javascript:;">编辑</a>
-                      <Divider type="vertical" />
-                      <a href="javascript:;">删除</a>
-                    </span>
-                    )}
-                />
-            </Table>
+                        )}
+                    />
+                    <Column
+                        title="操作"
+                        key="action"
+                        render={(record) => (
+                            <span>
+                              <a href="javascript:" onClick={ this.addOrEditFlower.bind(this,record.id) }>编辑</a>
+                              <Divider type="vertical" />
+                              <Popconfirm title="确认删除?" onConfirm={this.deleteConfirm.bind(this, record.id)}
+                                          okText="是" cancelText="否">
+                                  <a href="#">删除</a>
+                              </Popconfirm>
+                            </span>
+                        )}
+                    />
+                </Table>
+            </div>
         )
     }
 }

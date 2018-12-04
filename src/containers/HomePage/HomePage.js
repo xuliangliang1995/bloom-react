@@ -5,6 +5,7 @@ import Flowers from "../Flowers/Flowers";
 import Petals from '../Petals/Petals';
 import PetalsEditor from '../Petals/PetalsEditor';
 import PetalPage from '../Petals/PetalPage';
+import PetalFireTimeLine from '../TimeLine/PetalFireTimeLine'
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -26,7 +27,11 @@ class HomePage extends React.Component{
 
     }
     loginOut = () => {
-        this.props.location.state.loginOut();
+        try{
+            this.props.location.state.loginOut();
+        }catch{
+            window.location.href='/gardener/loginOut';
+        }
     }
     componentWillUnmount(){
         this.setState = (state,callback) => {
@@ -83,23 +88,16 @@ class HomePage extends React.Component{
                                     {leftMenus}
                                 </Menu>
                             </Sider>
-                            <Layout className={"grass-body"} style={{ padding: '0 24px 24px',minHeight:'900px' }}>
+                            <Layout className={"grass-body"} style={{ padding: '0 24px 24px',height:'100%',minHeight:'900px' }}>
                                 <Breadcrumb style={{ margin: '16px 0' }}>
                                     <Breadcrumb.Item>Home</Breadcrumb.Item>
                                     <Breadcrumb.Item>List</Breadcrumb.Item>
                                     <Breadcrumb.Item>App</Breadcrumb.Item>
                                 </Breadcrumb>
-                                <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280, height:'100%' }}>
-                                        <Route path={"/"}  component={
-                                            () => {
-                                                return <Flowers gardenerId={this.state.gardenerId}/>;
-                                            }
-                                        } exact/>
-                                        <Route path={"/flowers"} component={
-                                            () => {
-                                                return <Flowers gardenerId={this.state.gardenerId}/>;
-                                            }
-                                        } exact/>
+                                <Content style={{ background: '#fff', padding: 24, margin: 0, whiteSpace:'nowrap', height:'100%' }}>
+                                        <Route path={"/"}  component={() => { return <Flowers gardenerId={this.state.gardenerId}/>;}} exact/>
+                                        <Route path={"/flowers"} component={() => { return <Flowers gardenerId={this.state.gardenerId}/>;}} exact/>
+                                        <Route path={"/timeLine/petalFire"} component={ () => { return <PetalFireTimeLine gardenerId={this.state.gardenerId}/>} }/>
                                         <Route path={"/flowers/:flowerId/petals"} component={Petals} exact/>
                                         <Route path={"/flowers/:flowerId/petals/:petalId"} component={PetalPage} exact/>
                                         <Route path={"/flowers/:flowerId/petals/:petalId/editor"} component={PetalsEditor} exact/>
@@ -127,7 +125,7 @@ const defaultMenu = [
             {
                 key:'001002',
                 name: '时间轴',
-                to: '/time'
+                to: '/timeLine/petalFire'
             }
         ]
     },

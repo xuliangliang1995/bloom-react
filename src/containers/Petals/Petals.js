@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Divider,Icon,Modal,Button,message,Radio } from 'antd';
+import { Table, Divider,Icon,Modal,Button,message,Radio,Popconfirm  } from 'antd';
 import Request from '../../components/Axios/Axios.js';
 import { Link,Redirect } from 'react-router-dom';
 const { Column } = Table;
@@ -12,13 +12,19 @@ class Petals extends React.Component{
                 ?props.match.params.flowerId
                 :0,
             data: [],
-            pagination: {},
+            pagination: {
+                current: 1,
+                defaultCurrent: 1,
+                defaultPageSize: 10,
+                pageSize: 10,
+                total: 0
+            },
             loading: false,
             addPetal:false,
             modal:null
         }
     }
-    handleTableChange = (pagination, filters, sorter) => {
+    handleTableChange = (pagination) => {
         const pager = { ...this.state.pagination };
         pager.current = pagination.current;
         this.setState({
@@ -26,10 +32,7 @@ class Petals extends React.Component{
         });
         this.fetch({
             page_size: pagination.pageSize,
-            page_no: pagination.current,
-            sortField: sorter.field,
-            sortOrder: sorter.order,
-            ...filters,
+            page_no: pagination.current
         });
     }
     fetch = (params = {}) => {
@@ -44,7 +47,7 @@ class Petals extends React.Component{
                 _this.setState({
                     loading: false,
                     data: response.data.content,
-                    pagination
+                    pagination: pagination
                 })
             })
     }
@@ -60,7 +63,6 @@ class Petals extends React.Component{
         this.setState({
             addPetal: true
         })
-        console.log(this.state.addPetal)
     }
     choosePetalVariety = () => {
         this.setState({
@@ -71,19 +73,29 @@ class Petals extends React.Component{
                         <Radio.Group style={{ marginLeft:'auto',marginRight:'auto',width:'100%' }}>
                             <Radio.Button
                                 onClick = { this.addPetals }
-                                style={{ width:'50%'}}
+                                style={{ width:'50%',textAlign:'center'}}
                             >富文本</Radio.Button>
                             <Radio.Button
                                 onClick={ () => {
                                     message.info("暂不支持该选择！")
                                 }}
-                                style={{ width:'50%'}}
+                                style={{ width:'50%',textAlign:'center'}}
                             >链接</Radio.Button>
                         </Radio.Group>
                     </div>
                 ),
                 okText: '取消'
             })
+        })
+    }
+    deleteConfirm = (petalId,e) => {
+        e.preventDefault()
+        const path = '/flowers/'+this.state.flowerId+'/petal/'+petalId;
+        Request.delete(path).then(res => {
+            message.info(res.data);
+            this.handleTableChange(this.state.pagination);
+        }).catch(err => {
+            console.log(err)
         })
     }
     render(){
@@ -104,6 +116,9 @@ class Petals extends React.Component{
                         title={<Icon type="plus" onClick={ this.choosePetalVariety }/>}
                         dataIndex="id"
                         key="id"
+                        render = {(text,record,index) => {
+                            return parseInt(index+1+(this.state.pagination.current-1)*this.state.pagination.pageSize);
+                        }}
                     />
                     <Column
                         title="叶子"
@@ -127,13 +142,32 @@ class Petals extends React.Component{
                     <Column
                         title="操作"
                         key="action"
-                        render={() => (
-                            <span>
-                      <a href="javascript:;">编辑</a>
-                      <Divider type="vertical" />
-                      <a href="javascript:;">删除</a>
-                    </span>
-                        )}
+                        render={(text,record) => {
+                            switch (record.petalVarietyId) {
+                                case 1:
+                                    return (
+                                        <span>
+                                            <Link to={"/flowers/" + this.state.flowerId + "/petals/" + record.id + "/editor"}>编辑</Link>
+                                            <Divider type="vertical"/>
+                                            <Popconfirm title="确认删除?" onConfirm={this.deleteConfirm.bind(this, record.id)}
+                                                        okText="是" cancelText="否">
+                                                <a href="#">删除</a>
+                                            </Popconfirm>
+                                        </span>
+                                    )
+                                case 2:
+                                    return (
+                                        <span>
+                                            <Link to={"/flowers/" + this.state.flowerId + "/petals/" + record.id + "/editor"} disabled>编辑</Link>
+                                            <Divider type="vertical"/>
+                                            <Popconfirm title="确认删除?" onConfirm={this.deleteConfirm.bind(this, record.id)}
+                                                        okText="是" cancelText="否">
+                                                <a href="#">删除</a>
+                                            </Popconfirm>
+                                        </span>
+                                    )
+                            }
+                        }}
                     />
                 </Table>
             </div>
