@@ -127,14 +127,7 @@ export default class PetalPage extends  React.Component{
                 )
             }else if(this.state.petalVariety == 1){
                 return (
-                    <div style={{height:'100%',overflow:'auto'}}>
-                        <iframe id={'urlIframe'} style={{ padding:'0px',margin:'0px',height:'100%',minHeight:15000,width:'100%'}}
-                                frameBorder={0}
-                                marginHeight={'0px'}
-                                marginWidth={'0px'}
-                                width={'100%'}
-                                srcDoc = { this.htmlContent() }
-                        ></iframe>
+                    <div style={{height:'100%',overflow:'auto'}} dangerouslySetInnerHTML={{ __html:this.htmlContent() }}>
                     </div>
                 )
             }else{

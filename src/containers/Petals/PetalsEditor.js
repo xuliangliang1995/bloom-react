@@ -1,13 +1,58 @@
 import React from 'react'
 // 引入编辑器组件
 import BraftEditor from 'braft-editor'
-import { Drawer,Alert,message } from 'antd';
+import ColorPicker from 'braft-extensions/dist/color-picker'
+import Table from 'braft-extensions/dist/table'
+import CodeHighlighter from 'braft-extensions/dist/code-highlighter'
+
+import { ContentUtils } from 'braft-utils'
+import { Drawer,Alert,message,Upload,Icon,Spin } from 'antd';
+
 // 引入Petals表单
 import PetalsEditorForm from '../../components/PetalEditorForm/PetalEditorForm';
 
 import Request from '../../components/Axios/Axios';
+
 // 引入编辑器样式
 import 'braft-editor/dist/index.css'
+import 'braft-extensions/dist/color-picker.css'
+import 'braft-extensions/dist/table.css'
+import 'braft-extensions/dist/code-highlighter.css'
+
+import './PetalEditor.css'
+
+
+BraftEditor.use(Table({
+    includeEditors: ['editor-petal'],
+    defaultColumns: 3,
+    defaultRows: 3
+}))
+BraftEditor.use(ColorPicker({
+    includeEditors: ['editor-petal'],
+    theme: 'light'
+}))
+BraftEditor.use(CodeHighlighter({
+    includeEditors: ['editor-petal'],
+    syntaxs: [
+        {
+            name: 'Java',
+            syntax: 'java',
+        }, {
+            name: 'JavaScript',
+            syntax: 'javascript'
+        }, {
+            name: 'HTML',
+            syntax: 'html'
+        }, {
+            name: 'CSS',
+            syntax: 'css'
+        }, {
+            name: 'PHP',
+            syntax: 'php'
+        }
+    ]
+}))
+
 
 export default class PetalsEditor extends React.Component {
 
@@ -20,7 +65,8 @@ export default class PetalsEditor extends React.Component {
             visible: false,
             flowerId: props.match.params.flowerId,
             petalId: props.match.params.petalId,
-            readOnly:props.match.params.petalId>0
+            readOnly:props.match.params.petalId>0,
+            spinning: false
         }
     }
 
@@ -63,11 +109,34 @@ export default class PetalsEditor extends React.Component {
         // 在编辑器获得焦点时按下ctrl+s会执行此方法
         // 编辑器内容提交到服务端之前，可直接调用editorState.toHTML()来获取HTML格式的内容
         this.setState({editorState})
-        const htmlContent = this.state.editorState.toHTML()
         this.showDrawer()
     }
     handleEditorChange = (editorState) => {
         this.setState({ editorState })
+    }
+    onChange = (info) => {
+        const status = info.file.status;
+        if (status === 'uploading') {
+            this.setState({
+                spinning: true
+            })
+            return;
+        }
+        if (status === 'done') {
+            let imgUrl = info.file.response;
+            this.setState({
+                editorState: ContentUtils.insertMedias(this.state.editorState, [{
+                    type: 'IMAGE',
+                    url: imgUrl
+                }]),
+                spinning: false
+            })
+        } else if (status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+            this.setState({
+                spinning: false
+            })
+        }
     }
     buildPreviewHtml = ()=>{
         return `
@@ -125,15 +194,45 @@ export default class PetalsEditor extends React.Component {
       </html>`
     }
     render () {
+        const controls = ['font-size', 'bold', 'italic', 'underline', 'text-color', 'separator', 'link', 'separator', 'emoji',
+            'undo','blockquote', 'code', 'hr', 'table'];
+        const extendControls = [
+            {
+                key: 'antd-uploader',
+                type: 'component',
+                component: (
+                    <Upload
+                        accept="image/*"
+                        showUploadList={false}
+                        action = { "/aliyun/oss/upload/image" }
+                        onChange={ this.onChange }
+                    >
+                        {/* 这里的按钮最好加上type="button"，以避免在表单容器中触发表单提交，用Antd的Button组件则无需如此 */}
+                        <button type="button" className="control-item button upload-button" data-title="插入图片">
+                            <Icon type="picture" theme="filled" />
+                        </button>
+                    </Upload>
+                )
+            }
+        ]
         return (
             <div style={{ height:'100%'}}>
                 <Alert message="保存命令: Ctr + S" type="info" closable showIcon />
-                <BraftEditor
-                    value={ this.state.editorState }
-                    onChange={ this.handleEditorChange }
-                    onSave={ this.submitContent }
-                    style={{ height:'100%'}}
-                />
+                <Spin tip="uploading..." spinning = { this.state.spinning }>
+                    <div className="editor-container">
+                        <BraftEditor
+                            id = "editor-petal"
+                            controls = { controls }
+                            extendControls={ extendControls }
+                            value={ this.state.editorState }
+                            onChange={ this.handleEditorChange }
+                            onSave={ this.submitContent }
+                            style={{ height:'100%',minHeight:'800px'}}
+                            contentStyle={{ fontSize:16}}
+                            stripPastedStyles={ true }
+                        />
+                    </div>
+                </Spin>
                 <Drawer
                     title={"基本信息完善"}
                     placement="right"
@@ -148,6 +247,7 @@ export default class PetalsEditor extends React.Component {
                     <PetalsEditorForm editorState={ this.state.editorState }
                                       buildPreviewHtml={ this.buildPreviewHtml }
                                       style={{ height:'100%'}}
+                                      contentStyle = {{}}
                                       onClose={ this.onClose }
                                       petalId = { this.state.petalId }
                                       flowerId = { this.state.flowerId }

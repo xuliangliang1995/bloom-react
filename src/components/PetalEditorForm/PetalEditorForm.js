@@ -10,7 +10,6 @@ class PetalEditorFormBox extends React.Component {
         super(props);
         this.state={
             variety: 1,
-            editorState: props.editorState,
             flowerId: props.flowerId,
             petalId: props.petalId?props.petalId:0,
             petalName: '',
@@ -44,8 +43,8 @@ class PetalEditorFormBox extends React.Component {
         let _this = this;
         _this.props.form.validateFields((err, values) => {
             if(!err){
-                values["raw"]=this.state.editorState.toRAW();
-                values["text"]=this.state.editorState.toHTML();
+                values["raw"]=this.props.editorState.toRAW();
+                values["text"]=this.props.editorState.toHTML();
                 console.log(values)
                 if(this.state.petalId ==0 ){
                     const path = "/flowers/"+this.state.flowerId+"/petal";
@@ -74,9 +73,9 @@ class PetalEditorFormBox extends React.Component {
     render() {
         const { getFieldDecorator } = this.props.form;
         return (
-            <Layout style={{ height:'100%'}}>
-                <Content style={{ height:'50%'}}>
-                    <Form layout="vertical" hideRequiredMark style={{ height:'100px',padding:'5px'}}>
+            <Layout>
+                <Content style={{ height:'50%' }}>
+                    <Form layout="vertical" hideRequiredMark style={{ height:'100%',padding:'5px'}}>
                         <Row gutter={16}>
                             <Col span={12}>
                                 <Form.Item label="">
@@ -110,7 +109,7 @@ class PetalEditorFormBox extends React.Component {
                                         setFieldsValue: this.state.petalNote
                                     })(
                                         <TextArea
-                                            style={{ width: '100%', minHeight:'395px',height:'100%' }}
+                                            style={{ width: '100%',height:'100%',minHeight:'400px' }}
                                             placeholder="请输入备注信息"
                                             autosize
                                         />
@@ -118,10 +117,12 @@ class PetalEditorFormBox extends React.Component {
                                 </Form.Item>
                             </Col>
                         </Row>
+                        <Row>
+                            <Iframe style={{ height:'100%',margin:'0px'}} document={ this.getPreviewHtml() }/>
+                        </Row>
                     </Form>
                 </Content>
-                <Footer style={{ height:'50%',padding:'0px 0px 0px'}}>
-                    <Iframe style={{ height:'100%',margin:'0px'}} document={ this.getPreviewHtml() }/>
+                <Footer style={{ padding:'0px 0px 0px'}}>
                     <div
                         style={{
                             position: 'absolute',
